@@ -1,0 +1,126 @@
+#include <stdio.h>
+
+// Função para exibir o nome do atributo com base na opção
+const char* getNomeAtributo(int opcao) {
+    switch (opcao) {
+        case 1: return "População";
+        case 2: return "Área";
+        case 3: return "PIB";
+        case 4: return "Pontos Turísticos";
+        case 5: return "Densidade Demográfica";
+        case 6: return "PIB per Capita";
+        default: return "Desconhecido";
+    }
+}
+
+int main() {
+    // Dados das cartas
+    char nome1[] = "São Paulo";
+    int populacao1 = 12300000;
+    float area1 = 1521.11;
+    float pib1 = 699.28;
+    int pontosTuristicos1 = 50;
+
+    char nome2[] = "Rio de Janeiro";
+    int populacao2 = 6748000;
+    float area2 = 1200.25;
+    float pib2 = 300.50;
+    int pontosTuristicos2 = 30;
+
+    // Cálculos derivados
+    float densidade1 = populacao1 / area1;
+    float densidade2 = populacao2 / area2;
+    float pibPerCapita1 = (pib1 * 1000000000) / populacao1;
+    float pibPerCapita2 = (pib2 * 1000000000) / populacao2;
+
+    float valor1, valor2, soma1, soma2;
+    int attr1, attr2;
+
+    // Menu para escolha do primeiro atributo
+    printf("===== SUPER TRUNFO - COMPARAÇÃO COM DOIS ATRIBUTOS =====\n\n");
+    printf("Escolha o primeiro atributo:\n");
+    printf("1 - População\n2 - Área\n3 - PIB\n4 - Pontos Turísticos\n5 - Densidade Demográfica\n6 - PIB per Capita\n");
+    printf("Opção: ");
+    scanf("%d", &attr1);
+
+    // Menu dinâmico para o segundo atributo
+    printf("\nEscolha o segundo atributo (diferente do primeiro):\n");
+    for (int i = 1; i <= 6; i++) {
+        if (i != attr1) {
+            printf("%d - %s\n", i, getNomeAtributo(i));
+        }
+    }
+    printf("Opção: ");
+    scanf("%d", &attr2);
+
+    // Verificação básica
+    if (attr1 < 1 || attr1 > 6 || attr2 < 1 || attr2 > 6 || attr1 == attr2) {
+        printf("\nErro: Opções inválidas ou repetidas.\n");
+        return 1;
+    }
+
+    // Função para obter valor do atributo (para carta 1 e carta 2)
+    float getValor(int attr, int carta) {
+        switch (attr) {
+            case 1: return (carta == 1) ? populacao1 : populacao2;
+            case 2: return (carta == 1) ? area1 : area2;
+            case 3: return (carta == 1) ? pib1 : pib2;
+            case 4: return (carta == 1) ? pontosTuristicos1 : pontosTuristicos2;
+            case 5: return (carta == 1) ? densidade1 : densidade2;
+            case 6: return (carta == 1) ? pibPerCapita1 : pibPerCapita2;
+            default: return 0;
+        }
+    }
+
+    // Obter os valores dos atributos
+    float valor1_attr1 = getValor(attr1, 1);
+    float valor2_attr1 = getValor(attr1, 2);
+    float valor1_attr2 = getValor(attr2, 1);
+    float valor2_attr2 = getValor(attr2, 2);
+
+    // Cálculo da soma
+    soma1 = valor1_attr1 + valor1_attr2;
+    soma2 = valor2_attr1 + valor2_attr2;
+
+    // Exibir os valores
+    printf("\n=== Comparação ===\n");
+    printf("Atributos escolhidos: %s e %s\n\n", getNomeAtributo(attr1), getNomeAtributo(attr2));
+
+    printf("%s:\n", nome1);
+    printf("- %s: %.2f\n", getNomeAtributo(attr1), valor1_attr1);
+    printf("- %s: %.2f\n", getNomeAtributo(attr2), valor1_attr2);
+    printf("- Soma: %.2f\n\n", soma1);
+
+    printf("%s:\n", nome2);
+    printf("- %s: %.2f\n", getNomeAtributo(attr1), valor2_attr1);
+    printf("- %s: %.2f\n", getNomeAtributo(attr2), valor2_attr2);
+    printf("- Soma: %.2f\n\n", soma2);
+
+    // Comparações
+    int carta1_vitorias = 0;
+    int carta2_vitorias = 0;
+
+    // Função para comparar atributos com a regra da densidade
+    void comparar(int attr, float v1, float v2) {
+        if (attr == 5) { // Densidade: menor vence
+            (v1 < v2) ? carta1_vitorias++ : (v2 < v1) ? carta2_vitorias++ : 0;
+        } else {
+            (v1 > v2) ? carta1_vitorias++ : (v2 > v1) ? carta2_vitorias++ : 0;
+        }
+    }
+
+    comparar(attr1, valor1_attr1, valor2_attr1);
+    comparar(attr2, valor1_attr2, valor2_attr2);
+
+    // Comparação final pela soma
+    printf("=== Resultado ===\n");
+    if (soma1 > soma2) {
+        printf("Vencedora: %s!\n", nome1);
+    } else if (soma2 > soma1) {
+        printf("Vencedora: %s!\n", nome2);
+    } else {
+        printf("Resultado: Empate!\n");
+    }
+
+    return 0;
+}
